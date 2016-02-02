@@ -4,7 +4,7 @@ MODULE_NAME = hid-acer-one
 KVER = $(shell uname -r)
 MODDESTDIR = /lib/modules/$(KVER)/kernel/drivers/hid/
 
-# Add your debugging flag (or not) to CFLAGS
+# Add debugging flag (or not) to CFLAGS
 ifeq ($(DEBUG),y)
   DEBFLAGS = -O -g -DSHORT_DEBUG # "-O" is needed to expand inlines
 else
@@ -32,9 +32,6 @@ endif
 clean:
 	rm -rf *.o *~ core .depend .*.cmd *.ko *.mod.c .tmp_versions
 
-depend .depend dep:
-	$(CC) $(CFLAGS) -M *.c > .depend
-
 install:
 	install -p -m 644 $(MODULE_NAME).ko  $(MODDESTDIR)
 	/sbin/depmod -a ${KVER}
@@ -42,7 +39,3 @@ install:
 uninstall:
 	rm -f $(MODDESTDIR)/$(MODULE_NAME).ko
 	/sbin/depmod -a ${KVER}
-
-ifeq (.depend,$(wildcard .depend))
-include .depend
-endif
