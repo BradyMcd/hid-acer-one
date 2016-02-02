@@ -21,10 +21,10 @@
 /* Some Acer keyboards have an issue where they report an excessive max usages value
  * The kyboard targeted in this fix identifies itself as 06CB:73F4
  *
- * At boot this module pre-parses the report descriptor and changes the values so that they will parse properly
+ * At boot this module inspects the report descriptor for a specific error and changes the values so that they will parse properly
  */
 
-#define ACER_KBD_RDESC_ORIG_SIZE	188
+#define ACER_KBD_RDESC_SIZE	188
 #define ACER_KBD_RDESC_CHECK_POS	(173 * sizeof(__u8))
 #define ACER_KBD_RDESC_CHECK_DATA	0x2AFFFF150026FFFF
 #define ACER_KBD_RDESC_FIX_POS1		ACER_KBD_RDESC_CHECK_POS + 2
@@ -32,8 +32,8 @@
 
 static __u8 *acer_kbd_report_fixup(struct hid_device *hdev, __u8 *rdesc, unsigned int *rsize){
 
-  /* Check that we are looking at the same correct descirptor */
-  if (*rsize == ACER_KBD_RDESC_ORIG_SIZE) {
+  /* Check that the descriptor size matches what we expect */
+  if (*rsize == ACER_KBD_RDESC_SIZE) {
     __u64 check = be64_to_cpu(*(__be64 *)(rdesc + ACER_KBD_RDESC_CHECK_POS));
     
     /* check for invalid max usages */
